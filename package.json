@@ -1,7 +1,8 @@
 {
-  "name": "vs-waflows",
+  "name": "whatsappflows",
   "displayName": "Whatsapp Flows",
-  "description": "",
+  "description": "An extension for building and testing whatsapp flows inside vscode.",
+  "publisher": "fgcoelho17",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
@@ -10,26 +11,59 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:flow"
+    "onLanguage:json"
   ],
-  "main": "./dist/extension.js",
+  "type": "module",
+  "main": "./dist/extension.cjs",
   "contributes": {
-    "languages": [
+    "configuration": [
       {
-        "id": "flow",
-        "aliases": [
-          "Flow JSON"
-        ],
-        "extensions": [
-          ".flow",
-          ".flow.json"
-        ]
+        "title": "WhatsappFlows",
+        "properties": {
+          "whatsappFlows.graphVersion": {
+            "type": "string",
+            "enum": [
+              "21.0",
+              "20.0",
+              "19.0"
+            ],
+            "default": "21.0",
+            "description": "Graph API Version"
+          },
+          "whatsappFlows.wabaId": {
+            "type": "string",
+            "default": "",
+            "description": "Whatsapp Business Account ID"
+          },
+          "whatsappFlows.accessToken": {
+            "type": "string",
+            "default": "",
+            "description": "Application access token"
+          }
+        }
       }
     ],
     "commands": [
       {
-        "command": "extension.openTab",
-        "title": "Open Tab for Flow"
+        "command": "whatsappflows.openPreview",
+        "title": "Whatsapp Flows: Open Preview"
+      },
+      {
+        "command": "whatsappflows.reload",
+        "title": "Whatsapp Flows: Reload Extension"
+      },
+      {
+        "command": "whatsappflows.updateFlowJson",
+        "title": "Whatsapp Flows: Update Flow JSON"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          "*.flow",
+          "*.flow.json"
+        ],
+        "url": "./src/schemas/main.json"
       }
     ]
   },
@@ -58,6 +92,12 @@
     "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "prettier": "3.4.2"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "whatsapp-ts": "link:../whatsapp-ts"
   }
 }

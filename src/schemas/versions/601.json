@@ -1,0 +1,4823 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://whatsapp.com/flows-template-schema.v6.1.json",
+  "title": "WhatsApp Flows Template Schema",
+  "description": "The JSON schema describing WhatsApp Flows templates.",
+  "type": "object",
+  "required": ["screens", "version", "id", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "endpoint_uri": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "properties": {
+        "phone_number": {
+          "type": "string"
+        },
+        "flow_token": {
+          "type": "string"
+        },
+        "flow_action": {
+          "type": "string"
+        },
+        "flow_action_payload": {
+          "type": "object",
+          "properties": {}
+        },
+        "interactive": {
+          "type": "boolean"
+        }
+      },
+      "required": ["phone_number", "flow_token"],
+      "additionalProperties": false
+    },
+    "version": {
+      "type": "string",
+      "const": "6.1"
+    },
+    "data_api_version": {
+      "type": "string",
+      "const": "3.0"
+    },
+    "routing_model": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z,_]+$": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z,_]+$"
+          }
+        }
+      },
+      "propertyNames": {
+        "pattern": "^[a-zA-Z,_]+$"
+      }
+    },
+    "screens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "layout"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z,_]+$"
+          },
+          "title": {
+            "type": "string",
+            "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+          },
+          "data": {
+            "type": "object",
+            "patternProperties": {
+              "^(?!required).*$": {
+                "type": "object",
+                "required": ["__example__", "type"]
+              },
+              "^required$": {
+                "type": "array"
+              }
+            }
+          },
+          "refresh_on_back": {
+            "type": "boolean"
+          },
+          "terminal": {
+            "type": "boolean"
+          },
+          "layout": {
+            "type": "object",
+            "required": ["children", "type"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "const": "SingleColumnLayout"
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/$components/$embedded_link"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$footer"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_body"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_caption"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_heading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_subheading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$image"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_input_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_area_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$checkbox_group_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$radio_buttons_group_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$dropdown_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$date_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$if_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$switch_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$photo_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$document_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$optin_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$rich_text"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$calendar_picker_no_form"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "sensitive": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "terminal": {
+              "const": true
+            }
+          },
+          "required": ["terminal"]
+        },
+        "then": {
+          "properties": {
+            "success": {
+              "type": "boolean"
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "success": {
+              "not": {}
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "lead_gen_ai": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "$components": {
+      "$checkbox_group": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "CheckboxGroup"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "max-selected-items": {
+            "oneOf": [
+              {
+                "minimum": 2,
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-selected-items": {
+            "oneOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "media-size": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["regular", "large"]
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$checkbox_group_no_form": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "CheckboxGroup"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "max-selected-items": {
+            "oneOf": [
+              {
+                "minimum": 2,
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-selected-items": {
+            "oneOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "media-size": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["regular", "large"]
+          },
+          "init-value": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$embedded_link": {
+        "type": "object",
+        "required": ["type", "text", "on-click-action"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "EmbeddedLink"
+          },
+          "text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-click-action": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "enum": ["data_exchange", "navigate", "open_url"]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "next": {
+                "type": "object",
+                "required": ["name", "type"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "url": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "navigate"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["next"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["next"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["url"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["url"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": ["payload"]
+                  }
+                },
+                "else": {
+                  "required": ["payload"]
+                }
+              }
+            ]
+          }
+        }
+      },
+      "$text_input": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextInput"
+          },
+          "input-type": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["text", "number", "password", "passcode", "phone", "email"]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-chars": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$text_input_no_form": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextInput"
+          },
+          "input-type": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["text", "number", "password", "passcode", "phone", "email"]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-chars": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$text_area": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextArea"
+          },
+          "max-length": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$text_area_no_form": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextArea"
+          },
+          "max-length": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$text_body": {
+        "type": "object",
+        "required": ["type", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextBody"
+          },
+          "text": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  }
+                ]
+              },
+              {
+                "type": "array"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "font-weight": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["bold", "italic", "bold_italic", "normal"]
+          },
+          "strikethrough": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "markdown": {
+            "type": "boolean"
+          }
+        }
+      },
+      "$text_caption": {
+        "type": "object",
+        "required": ["type", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextCaption"
+          },
+          "text": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  }
+                ]
+              },
+              {
+                "type": "array"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "font-weight": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["bold", "italic", "bold_italic", "normal"]
+          },
+          "strikethrough": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "markdown": {
+            "type": "boolean"
+          }
+        }
+      },
+      "$text_heading": {
+        "type": "object",
+        "required": ["type", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextHeading"
+          },
+          "text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          }
+        }
+      },
+      "$text_subheading": {
+        "type": "object",
+        "required": ["type", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "TextSubheading"
+          },
+          "text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          }
+        }
+      },
+      "$optin": {
+        "type": "object",
+        "required": ["type", "label", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "OptIn"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-click-action": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "enum": ["data_exchange", "navigate", "open_url"]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "next": {
+                "type": "object",
+                "required": ["name", "type"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "url": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "navigate"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["next"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["next"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["url"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["url"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": ["payload"]
+                  }
+                },
+                "else": {
+                  "required": ["payload"]
+                }
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$optin_no_form": {
+        "type": "object",
+        "required": ["type", "label", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "OptIn"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-click-action": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "enum": ["data_exchange", "navigate", "open_url"]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "next": {
+                "type": "object",
+                "required": ["name", "type"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "url": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "navigate"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["next"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["next"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["url"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["url"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": ["payload"]
+                  }
+                },
+                "else": {
+                  "required": ["payload"]
+                }
+              }
+            ]
+          },
+          "init-value": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$radio_buttons_group": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "RadioButtonsGroup"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "media-size": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["regular", "large"]
+          }
+        }
+      },
+      "$radio_buttons_group_no_form": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "RadioButtonsGroup"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "media-size": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["regular", "large"]
+          }
+        }
+      },
+      "$dropdown": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Dropdown"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$dropdown_no_form": {
+        "type": "object",
+        "required": ["type", "name", "data-source", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Dropdown"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "data-source": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "title"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "oneOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..*\\}$"
+                        }
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6})$"
+                    },
+                    "image": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                        },
+                        {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        }
+                      ]
+                    },
+                    "alt-text": {
+                      "type": "string",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      ]
+                    },
+                    "on-select-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "on-unselect-action": {
+                      "type": "object",
+                      "required": ["name", "payload"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "const": "update_data"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "oneOf": [
+                  {
+                    "const": "data_exchange"
+                  },
+                  {
+                    "const": "update_data"
+                  }
+                ]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "on-unselect-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "update_data"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$date_picker": {
+        "type": "object",
+        "required": ["type", "label", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "DatePicker"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "unavailable-dates": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "max-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "data_exchange"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$date_picker_no_form": {
+        "type": "object",
+        "required": ["type", "label", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "DatePicker"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "unavailable-dates": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "min-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "max-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "data_exchange"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$switch": {
+        "type": "object",
+        "required": ["type", "value", "cases"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Switch"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+          },
+          "cases": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z][a-zA-Z0-9-_]*$": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/$components/$embedded_link"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$footer"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_body"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_caption"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_heading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_subheading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$image"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_input"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_area"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$optin"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$checkbox_group"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$radio_buttons_group"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$dropdown"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$date_picker"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$photo_picker"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$document_picker"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$calendar_picker"
+                    }
+                  ]
+                }
+              }
+            },
+            "propertyNames": {
+              "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$"
+            }
+          }
+        }
+      },
+      "$switch_no_form": {
+        "type": "object",
+        "required": ["type", "value", "cases"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Switch"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+          },
+          "cases": {
+            "type": "object",
+            "patternProperties": {
+              "^[a-zA-Z][a-zA-Z0-9-_]*$": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/$components/$embedded_link"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$footer"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_body"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_caption"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_heading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_subheading"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$image"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_input_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$text_area_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$optin_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$checkbox_group_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$radio_buttons_group_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$dropdown_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$date_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$photo_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$document_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$calendar_picker_no_form"
+                    }
+                  ]
+                }
+              }
+            },
+            "propertyNames": {
+              "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$"
+            }
+          }
+        }
+      },
+      "$if": {
+        "type": "object",
+        "required": ["type", "condition", "then"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "If"
+          },
+          "condition": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "then": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/$components/$text_body"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_caption"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_heading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_subheading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$image"
+                },
+                {
+                  "$ref": "#/$defs/$components/$embedded_link"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_input"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_area"
+                },
+                {
+                  "$ref": "#/$defs/$components/$optin"
+                },
+                {
+                  "$ref": "#/$defs/$components/$checkbox_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$radio_buttons_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$dropdown"
+                },
+                {
+                  "$ref": "#/$defs/$components/$date_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$switch"
+                },
+                {
+                  "$ref": "#/$defs/$components/$photo_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$document_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$calendar_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$footer"
+                },
+                {
+                  "$ref": "#/$defs/$components/$if"
+                }
+              ]
+            }
+          },
+          "else": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "$if_no_form": {
+        "type": "object",
+        "required": ["type", "condition", "then"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "If"
+          },
+          "condition": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "then": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/$components/$text_body"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_caption"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_heading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_subheading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$image"
+                },
+                {
+                  "$ref": "#/$defs/$components/$embedded_link"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_input_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_area_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$optin_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$checkbox_group_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$radio_buttons_group_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$dropdown_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$date_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$switch_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$photo_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$document_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$calendar_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$footer"
+                },
+                {
+                  "$ref": "#/$defs/$components/$if_no_form"
+                }
+              ]
+            }
+          },
+          "else": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "$photo_picker": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "PhotoPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "min-uploaded-photos": {
+            "minimum": 0,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-uploaded-photos": {
+            "minimum": 1,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-file-size-kb": {
+            "minimum": 1,
+            "maximum": 25600,
+            "type": "integer"
+          },
+          "photo-source": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["camera", "gallery", "camera_gallery"]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          }
+        }
+      },
+      "$photo_picker_no_form": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "PhotoPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "min-uploaded-photos": {
+            "minimum": 0,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-uploaded-photos": {
+            "minimum": 1,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-file-size-kb": {
+            "minimum": 1,
+            "maximum": 25600,
+            "type": "integer"
+          },
+          "photo-source": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["camera", "gallery", "camera_gallery"]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "error-message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "minProperties": 1,
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "$document_picker": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "DocumentPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "min-uploaded-documents": {
+            "minimum": 0,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-uploaded-documents": {
+            "minimum": 1,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-file-size-kb": {
+            "minimum": 1,
+            "maximum": 25600,
+            "type": "integer"
+          },
+          "allowed-mime-types": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "application/pdf",
+                "image/png",
+                "image/jpeg",
+                "image/avif",
+                "image/heic",
+                "image/heif",
+                "image/gif",
+                "image/tiff",
+                "image/webp",
+                "application/zip",
+                "application/gzip",
+                "application/x-7z-compressed",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.oasis.opendocument.presentation",
+                "application/vnd.oasis.opendocument.spreadsheet",
+                "application/vnd.oasis.opendocument.text",
+                "video/mp4",
+                "video/mpeg",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "text/plain",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              ]
+            }
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          }
+        }
+      },
+      "$document_picker_no_form": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "DocumentPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              }
+            ]
+          },
+          "min-uploaded-documents": {
+            "minimum": 0,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-uploaded-documents": {
+            "minimum": 1,
+            "maximum": 30,
+            "type": "integer"
+          },
+          "max-file-size-kb": {
+            "minimum": 1,
+            "maximum": 25600,
+            "type": "integer"
+          },
+          "allowed-mime-types": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "application/pdf",
+                "image/png",
+                "image/jpeg",
+                "image/avif",
+                "image/heic",
+                "image/heif",
+                "image/gif",
+                "image/tiff",
+                "image/webp",
+                "application/zip",
+                "application/gzip",
+                "application/x-7z-compressed",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.oasis.opendocument.presentation",
+                "application/vnd.oasis.opendocument.spreadsheet",
+                "application/vnd.oasis.opendocument.text",
+                "video/mp4",
+                "video/mpeg",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "text/plain",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              ]
+            }
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "error-message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "minProperties": 1,
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "$image": {
+        "type": "object",
+        "required": ["type", "src"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Image"
+          },
+          "width": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "src": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              },
+              {
+                "type": "string",
+                "contentEncoding": "base64",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              }
+            ]
+          },
+          "scale-type": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["cover", "contain"]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "alt-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "$footer": {
+        "type": "object",
+        "required": ["type", "label", "on-click-action"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Footer"
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "left-caption": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "center-caption": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "right-caption": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-click-action": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "enum": ["data_exchange", "navigate", "complete"]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "next": {
+                "type": "object",
+                "required": ["name", "type"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "url": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "navigate"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["next"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["next"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["url"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["url"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": ["payload"]
+                  }
+                },
+                "else": {
+                  "required": ["payload"]
+                }
+              }
+            ]
+          }
+        },
+        "dependencies": {
+          "left-caption": ["right-caption"],
+          "right-caption": ["left-caption"],
+          "center-caption": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["left-caption"]
+                },
+                {
+                  "required": ["right-caption"]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "$form": {
+        "type": "object",
+        "required": ["type", "name", "children"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "Form"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "minLength": 1
+          },
+          "error-messages": {
+            "oneOf": [
+              {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {}
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "init-values": {
+            "oneOf": [
+              {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {}
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/$components/$calendar_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_input"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_area"
+                },
+                {
+                  "$ref": "#/$defs/$components/$checkbox_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$radio_buttons_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$dropdown"
+                },
+                {
+                  "$ref": "#/$defs/$components/$date_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$embedded_link"
+                },
+                {
+                  "$ref": "#/$defs/$components/$footer"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_body"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_caption"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_heading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_subheading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$optin"
+                },
+                {
+                  "$ref": "#/$defs/$components/$image"
+                },
+                {
+                  "$ref": "#/$defs/$components/$if"
+                },
+                {
+                  "$ref": "#/$defs/$components/$switch"
+                },
+                {
+                  "$ref": "#/$defs/$components/$photo_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$document_picker"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "$rich_text": {
+        "type": "object",
+        "required": ["type", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "RichText"
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "text": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^(?!s*$).+"
+                }
+              },
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "$calendar_picker": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "CalendarPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "label": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          },
+          "helper-text": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "start-date": {
+                    "oneOf": [null, null]
+                  }
+                }
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["single", "range"]
+          },
+          "min-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "max-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "unavailable-dates": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "include-days": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            }
+          },
+          "min-days": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "max-days": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "data_exchange"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "$calendar_picker_no_form": {
+        "type": "object",
+        "required": ["type", "name", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "CalendarPicker"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "label": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          },
+          "helper-text": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "start-date": {
+                    "oneOf": [null, null]
+                  }
+                }
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["single", "range"]
+          },
+          "min-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "max-date": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "unavailable-dates": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "include-days": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            }
+          },
+          "min-days": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "max-days": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-select-action": {
+            "type": "object",
+            "required": ["name", "payload"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": "data_exchange"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          },
+          "init-value": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          },
+          "error-message": {
+            "oneOf": [
+              {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {}
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
