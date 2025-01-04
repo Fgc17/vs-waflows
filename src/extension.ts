@@ -1,46 +1,28 @@
 import * as vscode from "vscode";
 import { openPreview } from "./commands/open-preview";
 import { cache } from "./utils/cache";
-import { saveFlowJson } from "./commands/save-flow-json";
-import { cacheActiveFlowMetadata, isFlowJson } from "./utils/flows";
-import { reload } from "./commands/reload";
+import { refreshCache } from "./commands/refresh-cache";
+import { sendFlow } from "./commands/flows/send";
+import { saveFlowJson } from "./commands/flows/save";
+import { createFlow } from "./commands/flows/create";
+import { getActiveFlowJson, updateCachedFlow } from "./utils/flows";
 
 export function activate(context: vscode.ExtensionContext) {
   cache.initialize(context);
 
-  context.subscriptions.push(openPreview, saveFlowJson, reload);
-
-  vscode.commands.executeCommand("whatsappflows.reload");
-
-  const activeEditor = vscode.window.activeTextEditor;
-
-  const activeFileName = activeEditor?.document.fileName;
-
-  const isActiveFileFlowJson = isFlowJson(activeFileName);
-
-  if (activeEditor && isActiveFileFlowJson) {
-    vscode.commands.executeCommand("whatsappflows.openPreview");
-  }
+  context.subscriptions.push(
+    openPreview,
+    saveFlowJson,
+    createFlow,
+    sendFlow,
+    refreshCache
+  );
 
   vscode.workspace.onDidOpenTextDocument((document) => {
-    const activeFileName = document.fileName;
+    if (document.fileName.endsWith(".flow.json")) {
+      const flowJson = getActiveFlowJson(document);
 
-    const isActiveFileFlowJson = isFlowJson(activeFileName);
-
-    if (isActiveFileFlowJson) {
-      cacheActiveFlowMetadata();
-
-      vscode.commands.executeCommand("whatsappflows.openPreview");
-    }
-  });
-
-  vscode.workspace.onDidSaveTextDocument(async (document) => {
-    const activeFileName = document.fileName;
-
-    const isActiveFileFlowJson = isFlowJson(activeFileName);
-
-    if (isActiveFileFlowJson) {
-      vscode.commands.executeCommand("whatsappflows.saveFlowJson");
+      updateCachedFlow(flowJson);
     }
   });
 }

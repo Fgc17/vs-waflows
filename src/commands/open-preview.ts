@@ -36,17 +36,18 @@ export const openPreview = vscode.commands.registerCommand(
       return;
     }
 
-    const iframeUrl = await getFlowPreviewUrl(activeJson.id, activeJson.json);
+    const iframeUrl = await getFlowPreviewUrl(
+      activeJson.id,
+      activeJson.preview
+    );
 
     previewPanel.webview.onDidReceiveMessage((message) => {
-      if (message.command === "showPreview") {
+      if (message.command === "init") {
         previewPanel.webview.postMessage({
           command: "showPreview",
           iframeUrl,
         });
       }
     });
-
-    previewPanel.webview.postMessage({ command: "init" });
   }
 );

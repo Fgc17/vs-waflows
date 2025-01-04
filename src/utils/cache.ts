@@ -1,18 +1,23 @@
 import * as vscode from "vscode";
-import { FlowMetadata } from "../types/flow";
 import { getFlows } from "./flows";
+import {
+  FlowMetadata,
+  WhatsappGetFlowWebPreviewPageRequestQuery,
+} from "whatsapp-ts";
 
 export let cachedContext: vscode.ExtensionContext;
 
 interface CacheStorage {
   is_saving_flow: boolean | undefined;
+  is_sending_flow: boolean | undefined;
+  is_creating_flow: boolean | undefined;
   preview_webview_panel: vscode.WebviewPanel | undefined;
-  preview_url: string | undefined;
-  flows: Array<
-    FlowMetadata & {
-      id: string;
-    }
-  >;
+  flows: Array<{
+    id: string;
+    metadata: FlowMetadata;
+    preview_params?: WhatsappGetFlowWebPreviewPageRequestQuery;
+    preview_url?: string;
+  }>;
 }
 
 const get = <K extends keyof CacheStorage>(key: K) => {
@@ -30,11 +35,14 @@ const clear = (key: keyof CacheStorage) => {
 };
 
 const reset = async () => {
-  const flows = await getFlows();
+  const flows = await getFlows({
+    ignoreCache: true,
+  });
 
+  set("is_creating_flow", undefined);
+  set("is_sending_flow", undefined);
   set("is_saving_flow", undefined);
   set("preview_webview_panel", undefined);
-  set("preview_url", undefined);
   set("flows", flows);
 };
 

@@ -1,4 +1,5 @@
 import { context } from "esbuild";
+import copyPlugin from 'esbuild-plugin-copy';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -39,7 +40,17 @@ async function main() {
 		logLevel: 'silent',
 		plugins: [
 			esbuildProblemMatcherPlugin,
+			copyPlugin({
+				resolveFrom: 'cwd',
+				assets: {
+					from: ['./src/assets/**/*'],
+					to: ['./dist/assets'],
+				},
+			}),
 		],
+		loader: {
+			'.json': 'json',
+		}
 	});
 	if (watch) {
 		await ctx.watch();

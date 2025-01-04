@@ -1,10 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://whatsapp.com/flows-template-schema.v6.1.json",
+  "$id": "https://whatsapp.com/flows-template-schema.v6.2.json",
   "title": "WhatsApp Flows Template Schema",
   "description": "The JSON schema describing WhatsApp Flows templates.",
   "type": "object",
-  "required": ["screens", "version", "id", "name"],
+  "required": ["screens", "version", "metadata", "preview"],
   "additionalProperties": false,
   "properties": {
     "metadata": {
@@ -13,13 +13,30 @@
         "endpoint_uri": {
           "type": "string"
         },
-        "app_id": {
+        "application_id": {
           "type": "string"
         },
         "name": {
           "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SIGN_UP",
+              "SIGN_IN",
+              "APPOINTMENT_BOOKING",
+              "LEAD_GENERATION",
+              "CONTACT_US",
+              "CUSTOMER_SUPPORT",
+              "SURVEY",
+              "OTHER"
+            ]
+          }
         }
-      }
+      },
+      "required": ["application_id", "endpoint_uri", "categories", "name"]
     },
     "preview": {
       "type": "object",
@@ -31,7 +48,8 @@
           "type": "string"
         },
         "flow_action": {
-          "type": "string"
+          "type": "string",
+          "enum": ["navigate", "data_exchange"]
         },
         "flow_action_payload": {
           "type": "object",
@@ -46,7 +64,7 @@
     },
     "version": {
       "type": "string",
-      "const": "6.1"
+      "const": "6.2"
     },
     "data_api_version": {
       "type": "string",
@@ -176,6 +194,9 @@
                     },
                     {
                       "$ref": "#/$defs/$components/$calendar_picker_no_form"
+                    },
+                    {
+                      "$ref": "#/$defs/$components/$navigation_list"
                     }
                   ]
                 }
@@ -301,6 +322,18 @@
                   "additionalProperties": false,
                   "properties": {
                     "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
@@ -559,6 +592,18 @@
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
                     "enabled": {
                       "oneOf": [
                         {
@@ -732,6 +777,18 @@
               {
                 "type": "string",
                 "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "error-message": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
               }
             ]
           },
@@ -975,6 +1032,28 @@
               }
             ]
           },
+          "max-chars": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "name": {
             "type": "string",
             "allOf": [
@@ -992,6 +1071,43 @@
               },
               {
                 "type": "string"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "pattern": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "format": "regex"
+              }
+            ]
+          }
+        },
+        "dependencies": {
+          "pattern": {
+            "oneOf": [
+              {
+                "properties": {
+                  "input-type": {
+                    "enum": ["text", "password", "passcode", "number"]
+                  }
+                }
               }
             ]
           }
@@ -1065,6 +1181,28 @@
               }
             ]
           },
+          "max-chars": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "enabled": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "name": {
             "type": "string",
             "allOf": [
@@ -1085,6 +1223,17 @@
               }
             ]
           },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "init-value": {
             "type": "string",
             "allOf": [
@@ -1094,6 +1243,44 @@
               },
               {
                 "type": "string"
+              }
+            ]
+          },
+          "error-message": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "pattern": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "format": "regex"
+              }
+            ]
+          }
+        },
+        "dependencies": {
+          "pattern": {
+            "oneOf": [
+              {
+                "properties": {
+                  "input-type": {
+                    "enum": ["text", "password", "passcode", "number"]
+                  }
+                }
               }
             ]
           }
@@ -1129,6 +1316,17 @@
               }
             ]
           },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "label": {
             "type": "string",
             "allOf": [
@@ -1138,6 +1336,29 @@
               },
               {
                 "type": "string"
+              }
+            ]
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
               }
             ]
           },
@@ -1193,6 +1414,17 @@
               }
             ]
           },
+          "required": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "label": {
             "type": "string",
             "allOf": [
@@ -1202,6 +1434,29 @@
               },
               {
                 "type": "string"
+              }
+            ]
+          },
+          "helper-text": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
               }
             ]
           },
@@ -1226,6 +1481,18 @@
             ]
           },
           "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "error-message": {
             "type": "string",
             "allOf": [
               {
@@ -1263,7 +1530,20 @@
                 ]
               },
               {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1331,7 +1611,20 @@
                 ]
               },
               {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1616,6 +1909,17 @@
               }
             ]
           },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "on-select-action": {
             "type": "object",
             "required": ["name", "payload"],
@@ -1821,6 +2125,17 @@
               }
             ]
           },
+          "visible": {
+            "oneOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "init-value": {
             "oneOf": [
               {
@@ -1937,6 +2252,18 @@
                   "additionalProperties": false,
                   "properties": {
                     "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
@@ -2171,6 +2498,18 @@
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
                     "enabled": {
                       "oneOf": [
                         {
@@ -2323,6 +2662,30 @@
               }
             ],
             "enum": ["regular", "large"]
+          },
+          "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "error-message": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
           }
         }
       },
@@ -2400,6 +2763,18 @@
                   "additionalProperties": false,
                   "properties": {
                     "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
@@ -2610,6 +2985,18 @@
                       "type": "string",
                       "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
                     },
+                    "title": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "metadata": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "description": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
                     "enabled": {
                       "oneOf": [
                         {
@@ -2739,6 +3126,18 @@
             }
           },
           "init-value": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "error-message": {
             "type": "string",
             "allOf": [
               {
@@ -3043,6 +3442,18 @@
                 "type": "string"
               }
             ]
+          },
+          "error-message": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
           }
         }
       },
@@ -3290,7 +3701,67 @@
           },
           "else": {
             "type": "array",
-            "items": {}
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/$components/$text_body"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_caption"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_heading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_subheading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$image"
+                },
+                {
+                  "$ref": "#/$defs/$components/$embedded_link"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_input"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_area"
+                },
+                {
+                  "$ref": "#/$defs/$components/$optin"
+                },
+                {
+                  "$ref": "#/$defs/$components/$checkbox_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$radio_buttons_group"
+                },
+                {
+                  "$ref": "#/$defs/$components/$dropdown"
+                },
+                {
+                  "$ref": "#/$defs/$components/$date_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$switch"
+                },
+                {
+                  "$ref": "#/$defs/$components/$photo_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$document_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$calendar_picker"
+                },
+                {
+                  "$ref": "#/$defs/$components/$footer"
+                },
+                {
+                  "$ref": "#/$defs/$components/$if"
+                }
+              ]
+            }
           }
         }
       },
@@ -3378,7 +3849,67 @@
           },
           "else": {
             "type": "array",
-            "items": {}
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/$components/$text_body"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_caption"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_heading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_subheading"
+                },
+                {
+                  "$ref": "#/$defs/$components/$image"
+                },
+                {
+                  "$ref": "#/$defs/$components/$embedded_link"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_input_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$text_area_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$optin_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$checkbox_group_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$radio_buttons_group_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$dropdown_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$date_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$switch_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$photo_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$document_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$calendar_picker_no_form"
+                },
+                {
+                  "$ref": "#/$defs/$components/$footer"
+                },
+                {
+                  "$ref": "#/$defs/$components/$if_no_form"
+                }
+              ]
+            }
           }
         }
       },
@@ -3899,6 +4430,28 @@
               }
             ]
           },
+          "height": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "aspect-ratio": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
           "src": {
             "oneOf": [
               {
@@ -4211,6 +4764,9 @@
             "items": {
               "oneOf": [
                 {
+                  "$ref": "#/$defs/$components/$navigation_list"
+                },
+                {
                   "$ref": "#/$defs/$components/$calendar_picker"
                 },
                 {
@@ -4384,7 +4940,32 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
             ]
           },
@@ -4404,7 +4985,32 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
             ]
           },
@@ -4421,7 +5027,26 @@
                 "type": "object",
                 "properties": {
                   "start-date": {
-                    "oneOf": [null, null]
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                      }
+                    ]
                   }
                 }
               }
@@ -4615,7 +5240,32 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
             ]
           },
@@ -4635,7 +5285,32 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
             ]
           },
@@ -4652,7 +5327,26 @@
                 "type": "object",
                 "properties": {
                   "start-date": {
-                    "oneOf": [null, null]
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                      }
+                    ]
                   }
                 }
               }
@@ -4792,7 +5486,32 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
               }
             ]
           },
@@ -4812,7 +5531,433 @@
               },
               {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "start-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "end-date": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "$navigation_list": {
+        "type": "object",
+        "required": ["type", "name", "list-items"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "NavigationList"
+          },
+          "name": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!`.*`$)"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "label": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "media-size": {
+            "type": "string",
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "enum": ["regular", "large"]
+          },
+          "list-items": {
+            "oneOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "main-content"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "main-content": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        "description": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        "metadata": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": ["title"]
+                    },
+                    "end": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        "description": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        },
+                        "metadata": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": []
+                    },
+                    "start": {
+                      "type": "object",
+                      "properties": {
+                        "image": {
+                          "type": "string",
+                          "contentEncoding": "base64",
+                          "pattern": "^(?!\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)\\..+\\})"
+                        },
+                        "alt-text": {
+                          "type": "string",
+                          "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                        }
+                      },
+                      "required": ["image"],
+                      "additionalProperties": false
+                    },
+                    "badge": {
+                      "type": "string",
+                      "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "on-click-action": {
+                      "type": "object",
+                      "required": ["name"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "allOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "enum": ["data_exchange", "navigate"]
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
+                        },
+                        "next": {
+                          "type": "object",
+                          "required": ["name", "type"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "allOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "allOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "url": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                            }
+                          ]
+                        }
+                      },
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "name": {
+                                "const": "navigate"
+                              }
+                            }
+                          },
+                          "then": {
+                            "required": ["next"]
+                          },
+                          "else": {
+                            "not": {
+                              "required": ["next"]
+                            }
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "name": {
+                                "const": "open_url"
+                              }
+                            }
+                          },
+                          "then": {
+                            "required": ["url"]
+                          },
+                          "else": {
+                            "not": {
+                              "required": ["url"]
+                            }
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "name": {
+                                "const": "open_url"
+                              }
+                            }
+                          },
+                          "then": {
+                            "not": {
+                              "required": ["payload"]
+                            }
+                          },
+                          "else": {
+                            "required": ["payload"]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+              }
+            ]
+          },
+          "on-click-action": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "enum": ["data_exchange", "navigate"]
+              },
+              "payload": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              },
+              "next": {
+                "type": "object",
+                "required": ["name", "type"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "allOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(\\r?\\n?)*(?!\\s*$).+(\\r?\\n?)*"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "url": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "(^\\$\\{(screen\\.([a-zA-Z,_]*)\\.)?(data|form)(\\.[\\w-]+)+\\}|^`.+`)"
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "navigate"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["next"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["next"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "required": ["url"]
+                },
+                "else": {
+                  "not": {
+                    "required": ["url"]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "name": {
+                      "const": "open_url"
+                    }
+                  }
+                },
+                "then": {
+                  "not": {
+                    "required": ["payload"]
+                  }
+                },
+                "else": {
+                  "required": ["payload"]
+                }
               }
             ]
           }

@@ -1,22 +1,30 @@
 import * as vscode from "vscode";
 
-import { EnhancedFlowJSON, FlowMetadata, PreviewParams } from "../types/flow";
 import { cache } from "./cache";
 import { whatsapp } from "./whatsapp";
+import {
+  EnhancedFlowJSON,
+  WhatsappGetFlowWebPreviewPageRequestQuery,
+} from "whatsapp-ts";
 
-import { schemas } from "../schemas/index";
+import { schemas } from "./schemas";
 
 import AJV from "ajv";
 import addFormats from "ajv-formats";
+import { settings } from "./settings";
 
 const ajv = new AJV();
 
 addFormats(ajv);
 
 export const validateFlowJson = async (json: EnhancedFlowJSON) => {
+  delete json.id;
+
   const schema = (schemas as any)[json.version];
 
   const valid = ajv.validate(schema, json);
+
+  console.log(ajv.errors);
 
   return {
     valid,
@@ -24,140 +32,142 @@ export const validateFlowJson = async (json: EnhancedFlowJSON) => {
   };
 };
 
-export const getActiveFlowJson = () => {
+export const getActiveFlowJson = (document?: vscode.TextDocument) => {
   const activeEditor = vscode.window.activeTextEditor;
 
-  if (!activeEditor) {
-    return;
+  const activeDocument = document ?? activeEditor?.document;
+
+  if (!activeDocument) {
+    throw vscode.window.showErrorMessage("No active document found");
   }
 
-  const activeDocument = activeEditor.document;
-
-  const json = JSON.parse(activeDocument.getText()) as EnhancedFlowJSON;
+  const json = JSON.parse(activeDocument.getText()) as EnhancedFlowJSON & {
+    id: string;
+  };
 
   const cachedFlowData = cache
     .get("flows")
-    .find((f) => f.name === json.metadata.name);
+    .find((f) => f.metadata.name === json.metadata.name);
 
   if (cachedFlowData) {
     json["id"] = cachedFlowData.id;
   }
 
-  return json as EnhancedFlowJSON & {
-    id: string;
-  };
+  return json;
 };
 
-export const cacheActiveFlowMetadata = async () => {
-  const activeFlowJson = getActiveFlowJson();
-
-  if (!activeFlowJson) {
-    return;
-  }
-
-  const metadata = activeFlowJson.metadata;
-
+export const updateCachedFlow = ({
+  metadata,
+  preview: preview_params,
+}: EnhancedFlowJSON) => {
   const cachedFlows = cache.get("flows");
 
-  const activeFlowCacheIndex = cachedFlows.findIndex(
-    (flow) => flow.name === metadata.name
+  const flowIndex = cachedFlows.findIndex(
+    (flow) => flow.metadata.name === metadata.name
   );
 
-  if (activeFlowCacheIndex === -1) {
+  if (flowIndex === -1) {
     return;
   }
 
-  cachedFlows[activeFlowCacheIndex] = {
-    ...cachedFlows[activeFlowCacheIndex],
-    ...metadata,
+  cachedFlows[flowIndex] = {
+    ...cachedFlows[flowIndex],
+    metadata,
+    preview_params,
   };
 
   cache.set("flows", cachedFlows);
 };
 
-export const createFlow = async (name: string) => {
+export const createFlow = async (flow: EnhancedFlowJSON) => {
   const res = await whatsapp.sdk.actions.flows.create({
-    name,
-    categories: ["OTHER"],
+    name: flow.metadata.name,
+    categories: flow.metadata.categories,
   });
+
+  const currentFlows = cache.get("flows");
+
+  cache.set("flows", [
+    ...currentFlows,
+    { id: res.id, metadata: flow.metadata, preview_params: flow.preview },
+  ]);
 
   return { id: res.id };
 };
 
-export const updateFlowMetadata = async (
-  id: string,
-  metadata: FlowMetadata
-) => {
-  return await whatsapp.sdk.actions.flows.updateMetadata(id, metadata);
-};
+export const getFlows = async ({
+  ignoreCache = false,
+}: {
+  ignoreCache?: boolean;
+} = {}) => {
+  if (!ignoreCache) {
+    const cachedFlows = cache.get("flows");
 
-export const updateFlowJson = async (id: string, json: any) => {
-  const { validation_errors } = await whatsapp.sdk.actions.flows.updateJson(
-    id,
-    {
-      asset_type: "FLOW_JSON",
-      name: "flow.json",
-      file: new Blob([JSON.stringify(json, null, 2)], {
-        type: "application/json",
-      }),
+    if (cachedFlows?.length) {
+      return cachedFlows;
     }
-  );
-
-  return { validation_errors };
-};
-
-export const getFlows = async () => {
-  const cachedFlows = cache.get("flows");
-
-  if (cachedFlows?.length) {
-    return cachedFlows;
   }
 
   const flows = await whatsapp.sdk.actions.flows.getMany();
 
-  if (!flows) {
-    return;
-  }
-
-  return flows.data.map(({ id, name }: any) => ({ id, name }));
+  return flows.data.map(({ id, name, categories }) => ({
+    id,
+    metadata: { name, categories },
+  }));
 };
 
 export async function getFlowPreviewUrl(
   flowId: string,
-  params?: PreviewParams
+  params?: WhatsappGetFlowWebPreviewPageRequestQuery
 ) {
-  const cachedPreviewUrl = cache.get("preview_url");
+  const currentFlows = cache.get("flows");
 
-  if (cachedPreviewUrl) {
-    return cachedPreviewUrl;
+  const flowIndex = currentFlows.findIndex((f) => f.id === flowId);
+
+  const flow = currentFlows[flowIndex];
+
+  if (!flow) {
+    throw new Error(`Flow with id ${flowId} not found`);
   }
 
-  const { preview } = await whatsapp.sdk.actions.flows.createWebPreview(flowId);
-
-  const rawUrl = preview.preview_url;
-
-  const url = rawUrl?.replaceAll("\\", "");
-
-  if (!url) {
-    return;
-  }
-
-  const stringfiedSettings = Object.entries(params ?? {}).reduce(
-    (acc, [key, value]) => {
-      if (Boolean(value)) {
-        acc[key] = value.toString();
-      }
-
-      return acc;
-    },
-    {} as Record<string, string>
+  const shouldUseCache = Object.values(params ?? {}).every(
+    (param) => param in Object.entries(flow.preview_params ?? {})
   );
 
-  const queryParams = new URLSearchParams(stringfiedSettings);
+  const hasPreviewUrl = "preview_url" in flow;
 
-  const previewUrl = `${url}&${queryParams.toString()}`;
+  if (shouldUseCache && hasPreviewUrl) {
+    return flow.preview_url;
+  }
 
-  return previewUrl;
+  if (params?.flow_token) {
+    const { chatId, paramsString } = whatsapp.sdk.flows.getParams(
+      params?.flow_token
+    );
+
+    const flowName = whatsapp.sdk.flows.getName(params?.flow_token);
+
+    if (!chatId) {
+      const devChatId = settings().sendTo;
+
+      params.flow_token =
+        `${flowName}?chatId=${devChatId}` + (paramsString ?? "");
+    }
+  }
+
+  const preview_url = await whatsapp.sdk.actions.flows.getPreview(
+    flowId,
+    params
+  );
+
+  currentFlows[flowIndex] = {
+    ...flow,
+    preview_url,
+  };
+
+  cache.set("flows", currentFlows);
+
+  return preview_url;
 }
 
 export const isFlowJson = (fileName?: string) => {

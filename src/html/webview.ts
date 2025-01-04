@@ -62,7 +62,7 @@ export function webviewHTML() {
         });
 
         setTimeout(() => {
-          vscode.postMessage({ command: 'showPreview' });
+          vscode.postMessage({ command: 'init' });
         }, 1000);
       </script>
     </body>
